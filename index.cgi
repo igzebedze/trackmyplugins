@@ -32,7 +32,7 @@ my $lastyear = strftime '%Y', localtime(time() - 30 * 24 * 60 * 60);
 
 while (new CGI::Fast) {
 	print header;
-	print start_html("Fast CGI Rocks");
+	print start_html("Zemanta Plugin Downloads");
 	print 
 		h1("your downloads");
 
@@ -58,10 +58,20 @@ while (new CGI::Fast) {
 		$lastdownloads{'total'} += $dlls;
 	}
 
-	print "<table border='1'><tr><th>plugin</th><th>last month</th><th>month to date</th><th>eom estimate</th></tr>";
+	print "<table border='1'><tr>
+			<th>plugin</th>
+			<th>last month</th>
+			<th>month to date</th>
+			<th>eom estimate</th>
+		</tr>";
 	foreach my $plugin(keys(%downloads)){
 		my $eta = int($downloads{$plugin} * 30 / $day);
-		print "<tr><td>$plugin</td><td>".$lastdownloads{$plugin}."</td><td>".$downloads{$plugin}."</td><td>$eta (".int(($eta / $lastdownloads{$plugin}) * 100)."%)</td></tr>";
+		print "<tr>
+				<td>$plugin</td>
+				<td>".$lastdownloads{$plugin}."</td>
+				<td>".$downloads{$plugin}."</td>
+				<td>$eta (".int(($eta / $lastdownloads{$plugin}) * 100)."%)</td>
+			</tr>";
 	}
 	
 	print "</table>";
