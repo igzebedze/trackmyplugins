@@ -6,4 +6,4 @@ bittest	http://bit.ly/F1234
 wprp	http://wordpress.org/plugins/wordpress-23-related-posts-plugin/
 wpgp	http://wordpress.org/plugins/related-posts/
 zem2013	http://wordpress.org/plugins/related-posts-by-zemanta/
-searcheverything	http://wordpress.org/plugins/search-everything/
+search everything	http://wordpress.org/plugins/search-everything/

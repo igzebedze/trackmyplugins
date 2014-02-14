@@ -3,22 +3,23 @@
 # todo:
 # 	+ read plugins list from file
 #	+ read secrets from file
-#	- upload to git / write readme file
-#	- export API - days and months by plugin or all
-#	- export html report for dashboard
-#	- export prettier report for dashboard
+#	+ upload to git / write readme file
+#	+ export html report for dashboard
 #	+ get historic data
 #	+ incremental saving only
+#	- export prettier report for dashboard
+#	- export API - days and months by plugin or all
 #	- reconicile plugin names with panco
 #	- rewrite in python :)
 
 use strict;
 
 my $verbose = 1;
-my $debug = 0;
+my $debug = 1;
 my $history = 0; # try fetching history from all sources - todo
 
 use JSON;
+use utf8;
 use IO::Socket::SSL;
 use WWW::Mechanize;
 use DBI;
@@ -45,32 +46,37 @@ my $json = JSON->new->allow_nonref;
 foreach my $plugin (keys(%plugins)) {
 	warn $plugin if $verbose; 
 	my $url = $plugins{$plugin};
+	warn "\t$url" if $debug;
 	my $parser = 0;
 # guess parser
 	if ($url =~ /wordpress\.org\/plugins\/(.*)\//) {
 		my $slug = $1;
 		$parser = 1;
+		warn "\t".$parser if $debug;
 		my $json = &get_wordpress($url, $slug);
 		&store_wordpress($plugin, $url, $json);
 	} elsif ($url =~ /mozilla\.org\/en-US\/firefox\/addon\/(.*)\//) {
 		my $slug = $1;
 		$parser = 2;
+		warn "\t".$parser if $debug;
 		my $json = &get_mozilla($url, $slug);
 		&store_mozilla($plugin, $url, $json);
 	} elsif ($url =~ /google\.com\/webstore\/detail\/(.*?)\/(.*)/) {
 		my $slug = $1;
 		my $token = $2;
 		$parser = 3;
+		warn "\t".$parser if $debug;
 		my $json = &get_chrome($url, $token);
 		&store_chrome($plugin, $url, $json);
 	} elsif ($url =~ /\/\/(.*?)\/(.*)/) {	# fallback to bitly
 		my $customurl = $1;
 		my $slug = $2;
 		$parser = 4;
+		warn "\t".$parser if $debug;
 		my $json = &get_bitly($url, $slug);
 		&store_bitly($plugin, $url, $json);
 	}
-	warn "\tdone ".$parser if $debug;
+	warn "\tdone " if $debug;
 }
 
 $dbh->disconnect();
@@ -82,8 +88,9 @@ $dbh->disconnect();
 sub get_wordpress {
 	my ($url, $slug) = @_;
 	my $mech = WWW::Mechanize->new();
-	$mech->get("http://wpapi.org/api/plugin/$slug.json");
-	my $response = decode_json($mech->text());
+	$mech->get("http://wpapi.org/api/plugin/$slug.json?onlystats=true");
+	#my $response = decode_json($mech->text());
+	my $response = JSON->new->utf8->decode($mech->text());
 	return $response;
 }
 
