@@ -17,3 +17,12 @@ the solution:
  - simple flask script that serves the data via json API
 
 see it live at XXX
+
+to install:
+ - clone this repository somewhere where you will be able to access it online
+ - flush test.db
+ - edit plugins.txt
+ - rename secrets-example.txt to secrets.txt and fill it out
+ - edit agregator.pl to enable $history=1 and run once to collect the history. edit back.
+ - configure crontab to run the agregator.pl daily
+ - visit the url and test the api
