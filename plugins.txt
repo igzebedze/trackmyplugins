@@ -1,0 +1,5 @@
+wpea	http://wordpress.org/plugins/zemanta/
+firefoxea	https://addons.mozilla.org/en-US/firefox/addon/zemanta/
+chromeea	https://chrome.google.com/webstore/detail/related-content-by-zemant/fejeknoakjeblidffkajbioncodnmhge
+ieea	http://zem.si/ie_extension
+bittest	http://bit.ly/F1234
