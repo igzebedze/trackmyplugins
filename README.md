@@ -16,7 +16,7 @@ the solution:
  - sqlite3 database with dates and #downloads for each plugin
  - simple flask script that serves the data via json API
 
-see it live at XXX
+see it live at http://ceo.io/zemanta/downloads/
 
 to install:
  - clone this repository somewhere where you will be able to access it online
