@@ -116,13 +116,14 @@ while (my $q = new CGI::Fast) {
 					<th>month to date</th>
 					<th>EOM estimate</th>
 				</tr>";
-			foreach my $plugin(keys(%downloads)){
+			foreach my $plugin(sort(keys(%downloads))){
 				my $eta = int($downloads{$plugin} * 30 / $day);
+				my $test = $lastdownloads{$plugin} || 1;
 				print "<tr>
 						<td>$plugin</td>
 						<td>".$lastdownloads{$plugin}."</td>
 						<td>".$downloads{$plugin}."</td>
-						<td>$eta (".int(($eta / $lastdownloads{$plugin}) * 100)."%)</td>
+						<td>$eta (".int(($eta / $test) * 100)."%)</td>
 					</tr>";
 			}
 			print "</table>";	
