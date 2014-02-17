@@ -14,9 +14,9 @@
 
 use strict;
 
-my $verbose = 1;
-my $debug = 1;
-my $history = 0; # try fetching history from all sources - todo
+my $verbose = 1;	# will tell what it's doing
+my $debug = 0;		# will only print, not save to database
+my $history = 0;	# try fetching history from all sources
 
 use JSON;
 use utf8;
@@ -24,6 +24,8 @@ use IO::Socket::SSL;
 use WWW::Mechanize;
 use DBI;
 use POSIX;
+
+print "DEBUG MODE, NOTHING WILL BE SAVED!" if $debug;
 
 my $dbh = DBI->connect(          
 	    "dbi:SQLite:dbname=test.db", 
@@ -33,7 +35,13 @@ my $dbh = DBI->connect(
 	) or die $DBI::errstr;
 
 #$dbh->do("DROP TABLE IF EXISTS Downloads");
-$dbh->do("CREATE TABLE IF NOT EXISTS Downloads(Id INT PRIMARY KEY, Name TEXT, Date TEXT, Downloads INT, CONSTRAINT unq UNIQUE (Name, Date, Downloads))");
+$dbh->do("CREATE TABLE IF NOT EXISTS Downloads(Id INT PRIMARY KEY,
+ Name TEXT,
+ Date TEXT,
+ Downloads INT,
+ CONSTRAINT unq UNIQUE (Name,
+ Date,
+ Downloads))");
 
 my %plugins;
 &read_plugins_settings;
@@ -81,14 +89,21 @@ foreach my $plugin (keys(%plugins)) {
 
 $dbh->disconnect();
 
+print "DEBUG MODE, NOTHING WILL WAS SAVED!" if $debug;
+
 # --- scrapers ---
 
 # using 3rd party api that returns full history and all metadata in every call
 # might be better to use un-official one. 
+# official undocumented api:
+#	http://api.wordpress.org/stats/plugin/1.0/downloads.php?limit=730&slug=zemanta
 sub get_wordpress {
 	my ($url, $slug) = @_;
 	my $mech = WWW::Mechanize->new();
-	$mech->get("http://wpapi.org/api/plugin/$slug.json?onlystats=true");
+	#$mech->get("http://wpapi.org/api/plugin/$slug.json?onlystats=true");
+	my $limit = 5;
+		$limit = 730 if $history;
+	$mech->get("http://api.wordpress.org/stats/plugin/1.0/downloads.php?limit=$limit&slug=$slug");
 	#my $response = decode_json($mech->text());
 	my $response = JSON->new->utf8->decode($mech->text());
 	return $response;
@@ -152,7 +167,9 @@ sub get_chrome {
 	my ($url, $slug) = @_;
 	my $mech = WWW::Mechanize->new(ssl_opts => {
     	SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
-		verify_hostname => 0, # this key is likely going to be removed in future LWP >6.04
+
+		verify_hostname => 0,
+ # this key is likely going to be removed in future LWP >6.04
 	});
 	$mech->get("https://accounts.google.com/ServiceLogin?service=chromewebstore");
 	$mech->form_number(1);
@@ -171,7 +188,8 @@ sub get_bitly {
 	my ($url, $slug) = @_;
 	my $mech = WWW::Mechanize->new(ssl_opts => {
     	SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
-		verify_hostname => 0, # this key is likely going to be removed in future LWP >6.04
+		verify_hostname => 0,
+ # this key is likely going to be removed in future LWP >6.04
 	});
 	my $token = $secrets{'bitly'}{'token'};
 	my $limit = 5;	# default to updating last 5 days
@@ -185,6 +203,14 @@ sub get_bitly {
 # --- store data ---
 
 sub store_wordpress {
+	my ($name, $url, $json) = @_;
+	foreach my $date (keys(%{$json})) {
+		my $dlls = $json->{$date};
+		&store_row($name, $date, $dlls);
+	}
+}
+
+sub store_wordpress_from_unofficial_api {
 	my ($name, $url, $json) = @_;
 	foreach my $date (keys(%{$json->{'stats'}})) {
 		my $dlls = $json->{'stats'}{$date};
@@ -234,7 +260,7 @@ sub store_bitly {
 sub store_row {
 	my ($name, $date, $dlls) = @_;
 	print "$date - $dlls\n" if $debug;
-	$dbh->do("INSERT OR IGNORE INTO Downloads(Name, Date, Downloads) VALUES ('$name', '$date', '$dlls')");
+	$dbh->do("INSERT OR IGNORE INTO Downloads(Name, Date, Downloads) VALUES ('$name', '$date', '$dlls')") if !$debug;
 }
 
 # --- settings files ---

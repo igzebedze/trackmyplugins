@@ -26,3 +26,8 @@ to install:
  - edit agregator.pl to enable $history=1 and run once to collect the history. edit back.
  - configure crontab to run the agregator.pl daily
  - visit the url and test the api
+
+API
+ - index.cgi support some basic api calls:
+ - ?daily=1 spits out json object with all data from yesterday
+ - ?daily=1&date=2013-04-03 spits out json object with data from given date
