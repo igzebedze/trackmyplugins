@@ -93,14 +93,11 @@ print "DEBUG MODE, NOTHING WILL WAS SAVED!" if $debug;
 
 # --- scrapers ---
 
-# using 3rd party api that returns full history and all metadata in every call
-# might be better to use un-official one. 
 # official undocumented api:
 #	http://api.wordpress.org/stats/plugin/1.0/downloads.php?limit=730&slug=zemanta
 sub get_wordpress {
 	my ($url, $slug) = @_;
 	my $mech = WWW::Mechanize->new();
-	#$mech->get("http://wpapi.org/api/plugin/$slug.json?onlystats=true");
 	my $limit = 5;
 		$limit = 730 if $history;
 	$mech->get("http://api.wordpress.org/stats/plugin/1.0/downloads.php?limit=$limit&slug=$slug");
@@ -206,14 +203,6 @@ sub store_wordpress {
 	my ($name, $url, $json) = @_;
 	foreach my $date (keys(%{$json})) {
 		my $dlls = $json->{$date};
-		&store_row($name, $date, $dlls);
-	}
-}
-
-sub store_wordpress_from_unofficial_api {
-	my ($name, $url, $json) = @_;
-	foreach my $date (keys(%{$json->{'stats'}})) {
-		my $dlls = $json->{'stats'}{$date};
 		&store_row($name, $date, $dlls);
 	}
 }
