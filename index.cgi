@@ -8,7 +8,7 @@ use DBI;
 use POSIX;
 
 my $dbh = DBI->connect(          
-	    "dbi:SQLite:dbname=test.db", 
+	    "dbi:SQLite:dbname=data.db", 
 	    "",                          
 	    "",                          
 	    { RaiseError => 1 },         

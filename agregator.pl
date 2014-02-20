@@ -14,7 +14,7 @@
 
 use strict;
 
-my $verbose = 1;	# will tell what it's doing
+my $verbose = 0;	# will tell what it's doing
 my $debug = 0;		# will only print, not save to database
 my $history = 0;	# try fetching history from all sources
 
@@ -28,7 +28,7 @@ use POSIX;
 print "DEBUG MODE, NOTHING WILL BE SAVED!" if $debug;
 
 my $dbh = DBI->connect(          
-	    "dbi:SQLite:dbname=test.db", 
+	    "dbi:SQLite:dbname=data.db", 
 	    "",                          
 	    "",                          
 	    { RaiseError => 1 },         

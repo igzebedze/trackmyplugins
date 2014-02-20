@@ -3,7 +3,7 @@ firefoxea	https://addons.mozilla.org/en-US/firefox/addon/zemanta/
 chromeea	https://chrome.google.com/webstore/detail/related-content-by-zemant/fejeknoakjeblidffkajbioncodnmhge
 ieea	http://zem.si/ie_extension
 bittest	http://bit.ly/F1234
-wprp	http://wordpress.org/plugins/wordpress-23-related-posts-plugin/
-wpgp	http://wordpress.org/plugins/related-posts/
-zem2013	http://wordpress.org/plugins/related-posts-by-zemanta/
-search everything	http://wordpress.org/plugins/search-everything/
+wordpress-wprp	http://wordpress.org/plugins/wordpress-23-related-posts-plugin/
+wordpress-gp	http://wordpress.org/plugins/related-posts/
+wordpress-zem	http://wordpress.org/plugins/related-posts-by-zemanta/
+wordpress-se	http://wordpress.org/plugins/search-everything/
