@@ -174,7 +174,11 @@ sub get_chrome {
 	$mech->field("Passwd", $secrets{'chrome'}{'Passwd'});	
 	$mech->submit();
 	$mech->get("https://chrome.google.com/webstore/developer/data?tq=base_stats%3A".$slug."&tqx=reqId%3A0");
-	my $response = decode_json($mech->text());
+	my $returned_text = $mech->text() . "";
+	$returned_text =~ s/\R//g;
+	$returned_text =~ s/,,/,/g;
+	print $returned_text;
+	my $response = decode_json($returned_text);
 	return $response;
 }
 
