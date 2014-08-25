@@ -14,9 +14,10 @@
 
 use strict;
 
-my $verbose = 0;	# will tell what it's doing
+my $verbose = 1;	# will tell what it's doing
 my $debug = 0;		# will only print, not save to database
 my $history = 0;	# try fetching history from all sources
+my $dontoverwrite = 1; 	# wont store data if exists by default
 
 use JSON;
 use utf8;
@@ -254,8 +255,15 @@ sub store_bitly {
 
 sub store_row {
 	my ($name, $date, $dlls) = @_;
-	print "$date - $dlls\n" if $debug;
-	$dbh->do("INSERT OR IGNORE INTO Downloads(Name, Date, Downloads) VALUES ('$name', '$date', '$dlls')") if !$debug;
+	print "$date - $dlls\n" if $debug or $verbose;
+	my $sth = $dbh->prepare("SELECT * from Downloads WHERE Name='$name' AND Date='$date';");
+		$sth->execute();
+	if ($dontoverwrite and !$sth->fetchrow_array) {
+		print "\tinserting row\n" if $debug or $verbose;
+		$dbh->do("INSERT OR IGNORE INTO Downloads(Name, Date, Downloads) VALUES ('$name', '$date', '$dlls')") if !$debug;
+	} else {
+		print "\tskipping row, found data\n" if $debug or $verbose;
+	}
 }
 
 # --- settings files ---
