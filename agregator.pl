@@ -14,7 +14,7 @@
 
 use strict;
 
-my $verbose = 1;	# will tell what it's doing
+my $verbose = 0;	# will tell what it's doing
 my $debug = 0;		# will only print, not save to database
 my $history = 0;	# try fetching history from all sources
 my $dontoverwrite = 1; 	# wont store data if exists by default
