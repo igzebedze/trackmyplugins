@@ -24,6 +24,7 @@ use IO::Socket::SSL;
 use WWW::Mechanize;
 use DBI;
 use POSIX;
+use File::Basename;
 
 print "DEBUG MODE, NOTHING WILL BE SAVED!" if $debug;
 
@@ -42,6 +43,8 @@ $dbh->do("CREATE TABLE IF NOT EXISTS Downloads(Id INT PRIMARY KEY,
  CONSTRAINT unq UNIQUE (Name,
  Date,
  Downloads))");
+
+my $curr_path = dirname(__FILE__);
 
 my %plugins;
 &read_plugins_settings;
@@ -174,7 +177,10 @@ sub get_chrome {
 	$mech->field("Passwd", $secrets{'chrome'}{'Passwd'});	
 	$mech->submit();
 	$mech->get("https://chrome.google.com/webstore/developer/data?tq=base_stats%3A".$slug."&tqx=reqId%3A0");
-	my $response = decode_json($mech->text());
+	my $returned_text = $mech->text() . "";
+	$returned_text =~ s/\R//g;
+	$returned_text =~ s/,,/,/g;
+	my $response = decode_json($returned_text);
 	return $response;
 }
 
@@ -255,7 +261,7 @@ sub store_row {
 # --- settings files ---
 
 sub read_plugins_settings {
-	foreach my $line (readpipe("cat plugins.txt")) {
+	foreach my $line (readpipe("cat " . $curr_path . "/plugins.txt")) {
 		chop $line;
 		my @line = split/\t/,$line;
 		$plugins{$line[0]} = $line[1];
@@ -263,7 +269,7 @@ sub read_plugins_settings {
 }
 
 sub read_secrets {
-	foreach my $line (readpipe("cat secrets.txt")) {
+	foreach my $line (readpipe("cat " . $curr_path . "/secrets.txt")) {
 		chop $line;
 		my @line = split/\t/,$line;
 		my $name = shift(@line);
