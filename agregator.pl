@@ -27,10 +27,11 @@ use DBI;
 use POSIX;
 use File::Basename;
 
-print "DEBUG MODE, NOTHING WILL BE SAVED!" if $debug;
+my $curr_path = dirname(__FILE__);
 
+print "DEBUG MODE, NOTHING WILL BE SAVED!" if $debug;
 my $dbh = DBI->connect(          
-	    "dbi:SQLite:dbname=data.db", 
+	    "dbi:SQLite:dbname=" . $curr_path . "/data.db", 
 	    "",                          
 	    "",                          
 	    { RaiseError => 1 },         
@@ -44,8 +45,6 @@ $dbh->do("CREATE TABLE IF NOT EXISTS Downloads(Id INT PRIMARY KEY,
  CONSTRAINT unq UNIQUE (Name,
  Date,
  Downloads))");
-
-my $curr_path = dirname(__FILE__);
 
 my %plugins;
 &read_plugins_settings;
