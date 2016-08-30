@@ -77,8 +77,9 @@ foreach my $plugin (keys(%plugins)) {
 		my $token = $2;
 		$parser = 3;
 		warn "\t".$parser if $debug;
-		my $json = &get_chrome($url, $token);
-		&store_chrome($plugin, $url, $json);
+		watn "Chrome temp disabled"
+		#my $json = &get_chrome($url, $token);
+		#&store_chrome($plugin, $url, $json);
 	} elsif ($url =~ /\/\/(.*?)\/(.*)/) {	# fallback to bitly
 		my $customurl = $1;
 		my $slug = $2;
