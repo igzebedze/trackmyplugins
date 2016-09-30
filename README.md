@@ -23,6 +23,7 @@ to install:
  - flush test.db
  - edit plugins.txt
  - rename secrets-example.txt to secrets.txt and fill it out
+ - install perl depencancies: `sudo cpan JSON IO::Socket::SSL WWW::Mechanize DBD::SQLite LWP::Protocol::https`
  - edit agregator.pl to enable $history=1 and run once to collect the history. edit back.
  - configure crontab to run the agregator.pl daily
  - visit the url and test the api
